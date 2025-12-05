@@ -15,11 +15,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Create a User
+        $user = \App\Models\User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'), // password is "password"
         ]);
+
+        // Create a Group
+        $group = \App\Models\Group::create([
+            'admin_id' => $user->id,
+            'name' => 'Office Christmas Party',
+            'max_participants' => 10,
+            'invite_code' => \Illuminate\Support\Str::uuid(),
+            'status' => 'DRAFTING'
+        ]);
+
+        // Add Themes
+        $themes = ['Something Red', 'Something Long', 'Something Soft', 'Something Electronic'];
+        foreach ($themes as $t) {
+            \App\Models\Theme::create([
+                'group_id' => $group->id,
+                'description' => $t
+            ]);
+        }
     }
 }
